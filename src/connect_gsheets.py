@@ -1,17 +1,19 @@
 from apiclient import discovery
+from dotenv import dotenv_values
 from google.oauth2.service_account import Credentials
+
+ENV = dotenv_values('.env')
 
 
 def create_service():
-    secret_file = "src/gtoken/potent-trail-310719-56b958dbf764.json"
+    SECRET_FILE = ENV['GTOKEN']
     scopes = [
-        "https://www.googleapis.com/auth/drive",
-        "https://www.googleapis.com/auth/drive.file",
-        "https://www.googleapis.com/auth/spreadsheets"
+        'https://www.googleapis.com/auth/drive',
+        'https://www.googleapis.com/auth/drive.file',
+        'https://www.googleapis.com/auth/spreadsheets',
     ]
     credentials = Credentials.from_service_account_file(
-        secret_file,
-        scopes=scopes
+        SECRET_FILE, scopes=scopes
     )
     service = discovery.build('sheets', 'v4', credentials=credentials)
     return service
@@ -22,12 +24,16 @@ def export_dataset(gsheet_id, dataframe):
     service_sheet = service.spreadsheets()
 
     values = dataframe.values.tolist()
-    body = {"values": values}
+    body = {'values': values}
     range_name = 'ExpectativasMercadoAnuais!A2'
 
-    result = service_sheet.values().update(
-        spreadsheetId=gsheet_id,
-        range=range_name,
-        valueInputOption='RAW',
-        body=body). \
-        execute()
+    result = (
+        service_sheet.values()
+        .update(
+            spreadsheetId=gsheet_id,
+            range=range_name,
+            valueInputOption='RAW',
+            body=body,
+        )
+        .execute()
+    )

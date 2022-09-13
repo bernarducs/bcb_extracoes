@@ -1,5 +1,6 @@
 pandas
 python-bcb
+python-dotenv
 
 # google api
 google-api-python-client

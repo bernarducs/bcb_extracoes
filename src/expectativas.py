@@ -18,11 +18,11 @@ em = Expectativas()
 ep = em.get_endpoint('ExpectativasMercadoAnuais')
 
 
-def extracao_expectativas(indicador):
+def extracao_expectativas(indicador, data_min):
     df = (
         ep.query()
         .filter(ep.Indicador == f'{indicador}')
-        .filter(ep.Data >= '2021-01-01')
+        .filter(ep.Data >= data_min)
         .select(
             ep.Indicador,
             ep.Data,
@@ -38,11 +38,14 @@ def extracao_expectativas(indicador):
 
 if __name__ == '__main__':
     GSHEET_ID = ENV['GSHEET_ID']
-    indicadores = ['IPCA', 'PIB Total', 'PIB Serviços']
+    indicadores = ['IPCA', 'PIB Total', 'PIB Serviços', 'Selic', 'Câmbio']
 
     dfs = list()
     for indicador in indicadores:
-        df_extracao = extracao_expectativas(indicador)
+        data_min = '2022-01-01' \
+            if indicador in ['Selic', 'Câmbio'] \
+            else '2021-01-01'
+        df_extracao = extracao_expectativas(indicador, data_min)
         dfs.append(df_extracao)
 
     df = pd.concat(dfs)

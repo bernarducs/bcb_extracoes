@@ -37,7 +37,6 @@ def extracao_expectativas(indicador, data_min):
 
 
 if __name__ == '__main__':
-    GSHEET_ID = ENV['GSHEET_ID']
     indicadores = ['IPCA', 'PIB Total', 'PIB Serviços', 'Selic', 'Câmbio']
 
     dfs = list()
@@ -49,4 +48,8 @@ if __name__ == '__main__':
         dfs.append(df_extracao)
 
     df = pd.concat(dfs)
-    export_dataset(GSHEET_ID, df)
+    df.to_csv('expectativas.csv', sep=';', index=False)
+
+    # Caso tenha api key do googlesheets
+    # GSHEET_ID = ENV['GSHEET_ID']
+    # export_dataset(GSHEET_ID, df)
